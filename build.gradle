@@ -1,0 +1,52 @@
+group 'com.fewlaps.quitnowemailsuggester'
+version '2.0.0'
+
+apply plugin: 'java'
+apply plugin: 'com.novoda.bintray-release'
+apply plugin: 'cobertura'
+apply plugin: 'com.github.kt3k.coveralls'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.google.code.gson:gson:1.7.2'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.9.1'
+        classpath 'net.saliman:gradle-cobertura-plugin:2.0.0' // cobertura plugin
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
+    }
+}
+
+compileJava {
+    sourceCompatibility = 1.6
+    targetCompatibility = 1.6
+}
+
+publish {
+    userOrg = 'fewlaps'
+    groupId = 'com.fewlaps.quitnowemailsuggester'
+    artifactId = 'quitnow-email-suggester'
+    publishVersion = '2.0.0'
+    desc = ''
+    website = 'https://github.com/Fewlaps/quitnow-email-suggester'
+}
+
+cobertura.coverageFormats = ['html', 'xml'] // coveralls plugin depends on xml format report
+
+task gitUpdateSubmodules(type: Exec) {
+    description 'Initialize git submodules.'
+    commandLine "git", "submodule","update","--init","--recursive"
+}
+
+gradle.projectsEvaluated {
+    compileJava.dependsOn(gitUpdateSubmodules)
+}
